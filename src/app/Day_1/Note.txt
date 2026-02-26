@@ -1,0 +1,111 @@
+Angular component Lifecycle [order]
+----------------------------------
+Every angular component exactly goes through these hooks in this exact order.
+1. constructor()
+2. ngOnChanges()
+3. ngOnInit()
+4. ngDoCheck()
+5. ngAfterContentInit()
+6. ngAfterContentChecked()
+7. ngAfterViewInit()
+8. ngAfterViewChecked()
+9. ngOnDestroy()
+
+Binding Types in Angular
+************************
+Angular has 4 template binding Types
+
+Interpolation
+`````````````
+Display data in HTML
+One way - TS--> HTML
+
+<h2>{{productName}}</h2>
+
+Property binding
+````````````````
+Bind to DOM Property
+One way - TS--> HTML
+
+<img[src]='productImage">
+<button [disabled]='isOutOfStock">Buy</button>
+
+Event Binding
+`````````````
+Listen to DOm event
+HTML-->TS
+
+<button (click)='addToCart()`>Add</button>
+
+Two-way Binding
+```````````````
+Combination of property + event binding
+<input [(ngModel)]='searchText">
+
+----------------------------------------------------------------------------------------------------------
+Structuraal Directives
+**********************
+*ngIf 
+`````
+Old
+---
+<p *ngIf='isAvailable"> In Stock </p>
+
+New 
+---
+@if(isAvailable){
+    <p>Hello</p>
+}
+-------------------------------------------------------------
+*ngFor 
+``````
+Old
+---
+<li *ngFor="let p of products; trackBy: trackById">
+
+New 
+---
+@for (p of products; track p.id) {
+
+------------------------------------------------------------
+trackBy
+``````
+Without trackBy --> Angular recreates all DOM nodes 
+With trackBy --> Angular updates only changes items
+
+Old
+---
+<li *ngFor='let p of products; trackBy: trackById">
+{{p.name}}
+</li>
+
+New
+---
+@for (item of list; track item.id)
+
+trackById(index:number, item:any){
+    return item.id;
+    }
+
+Performance optimization
+-------------------------------------------
+Now you speak aloud (very important):
+
+🎤 Q1 — Lifecycle order?
+
+Answer:
+
+Angular lifecycle starts with constructor, then ngOnChanges, ngOnInit, ngDoCheck, ngAfterContentInit, ngAfterContentChecked, ngAfterViewInit, ngAfterViewChecked, and finally ngOnDestroy.
+
+🎤 Q2 — Binding types?
+
+Answer:
+
+Angular has interpolation, property binding, event binding, and two-way binding. Interpolation and property binding send data from component to template, event binding sends from template to component, and two-way binding works both ways.
+
+🎤 Q3 — trackBy benefits?
+
+Answer:
+
+trackBy improves performance in *ngFor by helping Angular identify list items uniquely. Without trackBy Angular recreates DOM elements on changes, but with trackBy only changed items update.
+

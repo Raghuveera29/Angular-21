@@ -1,0 +1,23 @@
+<h2>Product List</h2>
+<ul>
+  <li *ngFor="let p of products; trackBy: trackById">
+    {{ p.name }} - ${{ p.price }} -- {{ p.id }}
+
+    <button (click)="selectProduct(p)">Select</button>
+  </li>
+</ul>
+
+<!-- Latest angular code -->
+<ul>
+  @for (p of products; track p.id) {
+    <li>{{ p.name }} - ${{ p.price }}</li>
+
+    @if (p.stock) {
+      <span>In Stock</span>
+    } @else {
+      <span>Out of stock</span>
+    }
+    <button (click)="selectProduct(p)">Selected Product</button>
+  }
+</ul>
+<button (click)="addProduct()">Add Product</button>
