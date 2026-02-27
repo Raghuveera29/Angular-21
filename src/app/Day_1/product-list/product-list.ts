@@ -9,9 +9,10 @@ import { Component } from '@angular/core';
 })
 export class ProductList {
   products = [
-    { id: 1, name: 'laptop', price: 3000, stock: true },
-    { id: 2, name: 'computer', price: 10000, stock: false },
-    { id: 3, name: 'apple', price: 50000, stock: true },
+    { id: 1, name: 'laptop', price: 3000, stock: true, category: 'electronics' },
+    { id: 2, name: 'computer', price: 10000, stock: false, category: 'elecronics' },
+    { id: 3, name: 'T-Shirt', price: 800, stock: true, category: 'fashion' },
+    { id: 4, name: 'Book', price: 500, stock: true, category: 'books' },
   ];
 
   selectProduct(p: any) {
@@ -28,6 +29,7 @@ export class ProductList {
       name: 'macbook',
       price: 7000,
       stock: true,
+      category: 'others',
     });
   }
 }

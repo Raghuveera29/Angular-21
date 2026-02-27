@@ -1,0 +1,336 @@
+// Interfaces → Angular models
+// Types → unions / utilities
+
+// Generics → reusable typed structures
+// Example: ApiResponse<T>
+
+// Utility Types:
+// Partial<T> → optional fields
+// Pick<T,K> → select fields
+// Record<K,T> → key-value map
+
+Day 2 — TypeScript for Angular
+A:
+Interfaces vs types
+Generics
+Utility types (Partial, Pick, Record)
+
+B:
+Refactor model classes with strong typing
+Add generic API response interface
+
+C:
+Explain:
+generics use case
+interface vs type
+strict typing benefits
+
+Interfaces vs Types
+------------------
+Both interface 7 type define the shape of data in Typescript. they describe what an object should look like.
+
+Interfaces
+---------
+interface Product{
+    id:number,
+    name:string,
+    price:number
+}
+interface - typescript keyword to define object structure
+Product - name of the Type (pascal case by convention)
+{} - Object shape definition
+id: number - property id must be number
+
+This means Any variable of type Product must contain id,name,price
+
+Usage
+----
+const p: Product = {
+    id:1,
+    name:'laptop',
+    price:4000
+}
+const - Variable cannot be reassigned
+p - variable name
+:Product - Type annotation
+{} - actual object
+if anything missing - compile error
+
+TYPE
+---
+type Product = {
+    id:number;
+    name:string;
+    price:5000;
+}
+type - keyword to create alias
+Product - alias name
+{} - object structure
+
+When Type is More Powerful
+type Id = number | string; //can be done
+interface ID =number | string;//can't be done
+
+Note: Use interface for models because interfaces are extendable and readable.
+
+GENERICS 
+--------
+Generics = Placeholder Type
+Function or interface that works with many data types
+
+Without generics Problem
+-----------------------
+interface Productresponse {
+    data:Product[];
+    status: number;
+}
+
+then for users
+
+interface UserResponse{
+    data:User[];
+    status: number;
+}
+Duplicate structure❌
+
+GENERIC SOLUTION
+----------------
+interface ApiResponse<T>{
+    data:T;
+    message: string;
+    success: boolean;
+}
+ApiResponse - generic interface name
+<T> - generic Placeholder
+T - unknown type for now
+data:T - data will be replaced by actual type
+
+USAGE 
+----
+ApiResponse<Product[]>
+here,
+T = Product[]
+so typescript sees
+{
+    data: Product[];
+    message:string;
+    success: boolean;
+}
+
+REAL ANGULAR 
+------------
+getProducts(): Observable<ApiResponse<Product[]>>{
+    return this.http.get<ApiResponse<Product[]>>('api/products');
+}
+Observable - async stream
+ApiResponse - API wrapper
+Product[]- actual payload
+
+UTILITY TYPES 
+-------------
+Utility types transform existing types.
+
+PARTIAL <T>
+----------
+type ProductUpdate = Partial<Product>;
+
+Meaning - Create a new type where all product fields optional.
+
+Original
+--------
+interface Product{
+    id:number;
+    name:string;
+    price:number;
+}
+After Partial
+------------
+{
+    id?:number;
+    name?:string;
+    price?:number;
+}
+? - optional
+why needed? - Update Api may send only changed fields
+Without partial - error
+with partial - valid
+
+Pick<T, K> — Line by Line
+-------------------------
+type ProductListItem = Pick<Product, 'id' | 'name'>;
+
+Pick → select fields
+Product → source type
+'id' | 'name' → keys to keep
+
+Result 
+{
+  id: number;
+  name: string;
+} 
+Use case:
+List view needs less data.
+
+✅ Record<K, T> — Line by Line 
+------------------------------
+type ProductMap = Record<number, Product>;
+
+keys = number
+values = Product 
+
+{
+  [key: number]: Product;
+}
+
+productMap = {
+  1: { id:1, name:'Laptop', price:50000 },
+  2: { id:2, name:'Mobile', price:20000 }
+}
+Use case:
+Fast lookup by id.
+
+Q1. generic use case?
+A. generics allow creating reusable type-safe structures like APi responses or services that can work with multiple data types preserving strong typing.
+
+Q2. Interface vs Type?
+A. Interfaces are primarily used to define object structures and are preferred in Angular models. Types are more flexible and can represent unions, primitives & complex compositions. Interfaces support declaration merging while types do not.
+
+Q3. Strict typing Benifits?
+A. Strict typing improves code sfety, enables intellisense, prevents runtime errors, and makes refactoring easier. It also improves maintainability in large angular appilications.
+
+“Interfaces support declaration merging while types do not — meaning?”
+
+Let’s break this in simple + practical + interview-ready way.
+
+✅ 1️⃣ What is Declaration Merging?
+
+Declaration merging means:
+
+👉 You can declare the same interface multiple times
+👉 TypeScript will automatically combine them into one
+
+✅ 2️⃣ Example — Interface Merging
+interface Product {
+  id: number;
+}
+
+interface Product {
+  name: string;
+}
+
+const p: Product = {
+  id: 1,
+  name: "Phone"
+};
+
+👉 TypeScript merges them into:
+
+interface Product {
+  id: number;
+  name: string;
+}
+
+✔ Valid
+✔ Works
+✔ Compiles
+
+This is declaration merging.
+
+❌ 3️⃣ Types DO NOT Merge
+
+Same with type:
+
+type Product = {
+  id: number;
+}
+
+type Product = {
+  name: string;
+}
+
+❌ Error:
+
+Duplicate identifier 'Product'
+
+👉 Types cannot be declared twice.
+
+✅ 4️⃣ Why Interface Supports Merging?
+
+Because interfaces are open (extendable).
+Types are closed (fixed).
+
+Think:
+
+Interface → expandable blueprint
+
+Type → final shape
+
+✅ 5️⃣ Real Angular Use Case (Important)
+
+Angular itself uses declaration merging.
+
+Example: DOM typings
+
+interface Window {
+  myCustomProp: string;
+}
+
+You can add properties to global objects safely.
+
+Another library can also add:
+
+interface Window {
+  analytics: any;
+}
+
+👉 Both merge automatically.
+
+✅ 6️⃣ Interview Explanation (Best Answer)
+
+If interviewer asks:
+
+👉 “Why use interface instead of type?”
+
+You say:
+
+Interfaces support declaration merging, meaning the same interface can be declared multiple times and TypeScript combines them. Types cannot do this because they are closed aliases.
+
+✅ 7️⃣ Visual Understanding
+
+Interface:
+
+interface A { x }
+interface A { y }
+
+→ merged → { x, y }
+
+Type:
+
+type A = { x }
+type A = { y }
+
+→ ❌ error
+✅ 8️⃣ Important: Types CAN extend — but not merge
+
+This works:
+
+type A = { x: number }
+type B = A & { y: number }
+
+But this is NOT merging — it's composition.
+
+✅ 9️⃣ Quick Memory Trick
+
+👉 Interface = extendable + mergeable
+👉 Type = flexible + powerful + non-mergeable
+
+✅ 10️⃣ When Angular Devs Prefer Interface
+
+Use interface for:
+
+✔ API models
+✔ DTOs
+✔ Class shapes
+✔ Angular services contracts
+
+Because future extension is possible.
