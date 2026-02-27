@@ -1,3 +1,21 @@
+Day 1 — Components & Binding
+A:
+Component lifecycle
+Interpolation vs property vs event binding
+Structural directives (*ngIf, *ngFor, trackBy)
+
+B:
+Build product list component with:
+*ngFor
+trackBy
+click events
+
+C:
+Explain aloud:
+lifecycle order
+binding types
+trackBy benefits
+
 Angular component Lifecycle [order]
 ----------------------------------
 Every angular component exactly goes through these hooks in this exact order.
@@ -89,6 +107,20 @@ trackById(index:number, item:any){
 
 Performance optimization
 -------------------------------------------
+Old
+---
+<div [ngSwitch]='p.category>
+    <span *ngSwitchCase="'electonics'">Electronics</span>
+    <span *ngSwitchDefault>Other</span>
+</div>
+
+New
+---
+@switch(expression){
+    @case(value){...}
+    @case(value){...}
+    default{...}
+}
 Now you speak aloud (very important):
 
 🎤 Q1 — Lifecycle order?
