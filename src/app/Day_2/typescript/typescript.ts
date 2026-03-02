@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Product } from '../models/product';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-typescript',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './typescript.html',
   styleUrl: './typescript.scss',
 })
