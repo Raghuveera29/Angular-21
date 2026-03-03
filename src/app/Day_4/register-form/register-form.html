@@ -1,0 +1,19 @@
+<p>register-form works!</p>
+<form [formGroup]="registerForm">
+  <input formControlName="userName" placeholder="Username" />
+  <div *ngIf="registerForm.get('userName')?.errors?.['required']">Username required</div>
+
+  <div *ngIf="registerForm.get('userName')?.errors?.['usernameTaken']">Username already taken</div>
+
+  <input type="password" formControlName="password" placeholder="Password" />
+  <input type="password" formControlname="confirmpassword" placeholder="Confirm" />
+
+  <div *ngIf="registerForm.errors?.['passwordMismatch']">Passwords do not match</div>
+
+  <div formGroupName="address">
+    <input formControlName="city" placeholder="City" />
+    <input formControlName="zip" placeholder="Zip code" />
+  </div>
+
+  <button [disabled]="registerForm.invalid">Submit</button>
+</form>

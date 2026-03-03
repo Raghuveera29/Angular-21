@@ -1,0 +1,126 @@
+Day 4 — Angular Forms 
+A: Reactive vs template forms 
+FormGroup, FormControl 
+Validators, async validators 
+
+B: Complex reactive form: 
+nested groups 
+custom validator 
+error display 
+
+C: Explain reactive vs template
+
+
+Reactive Forms vs Template Forms
+-------------------------------
+Angular has two form approaches
+
+Template-Driven	Reactive
+--------------- --------
+Logic in HTML	Logic in TypeScript
+Uses ngModel	Uses FormControl
+Harder to scale	Best for large apps
+Less testable	Highly testable
+Less control	Full control
+
+Template Driven
+--------------
+HTML controls form state
+
+<input [(ngModel)]='name' required>
+Angular automatically creates form model behind the scenes. - Simple forms only
+
+Reactive Forms
+-------------
+You create form model manually in TypeScript
+name = new FormControl('');
+
+then bind,
+<input [formControl]='name'
+now TypeScript fully controls forms
+
+FormControl
+------------
+name = new FormControl('')
+
+FormControl = class from @angular/forms
+Represents a single input field.
+Holds
+* value
+* validation status
+* touched state
+* dirty state
+
+we can access
+this.name.value
+this.name.valid
+this.name.invalid
+this.name.touched
+this.name.dirty
+
+FormGroup
+---------
+FormGroup groups multiple formControls.
+
+form = new FormGroup({
+    name: new FormControl('');
+    email: new FormControl('');
+});
+meaning - Form has 2 controls name and email
+
+Access:
+ this.form.value
+ this.form.get('name')
+ this.form.valid
+
+ Validators(Built-in)
+ --------------------
+ Angular provides
+
+ Validators.required
+ Validators.email
+ Validators.minLength(3)
+ Validators.maxLength(10)
+
+ Usage:
+ name: new FormControl('',[
+    Validators.required,
+    Validators.minLength(3)
+ ])
+ Second argument = sync validators array
+
+ Async Validators
+ ----------------
+ Used when validations needs server call
+
+ -->Check username availability
+ signature
+ ----------
+
+(control: AbstractControl)=> Observable<ValidationErrors | null>
+
+Return
+* null --> valid
+* error object -->invalid
+
+Reactive vs Template?
+
+Template forms rely on ngModel and logic inside HTML. Reactive forms are built in TypeScript using FormControl and FormGroup, offering better scalability, testability, and dynamic validation control. Reactive forms are preferred in enterprise Angular applications.
+
+🎤 Why Reactive Preferred?
+
+Better testability
+
+Better scalability
+
+Centralized logic
+
+Easier dynamic forms
+
+🎤 What is FormGroup?
+
+FormGroup is a collection of FormControls that tracks overall form state and validation.
+
+🎤 What is Custom Validator?
+
+A function that receives AbstractControl and returns ValidationErrors or null based on custom logic.
