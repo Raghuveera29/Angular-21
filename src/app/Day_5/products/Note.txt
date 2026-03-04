@@ -1,0 +1,143 @@
+Day 5 - HTTP & Interceptors
+A.
+HttpClient methods
+Error handling
+Interceptors
+Retry & caching
+
+B.
+API service
+interceptor adds token
+retry(2)
+global error handler
+
+C.
+Explain interceptor flow
+
+1. HttpClient (Angular HTTP API)
+--------------------------------
+Angular provides HttpClient service to communicate with backend API's.
+
+import {HttpClient} from '@angular/common/http';
+
+Why HttpClient?
+It provides
+* Typed responses
+* RxJS Observables
+* Interceptors support
+* Automatic JSON parsing
+* Error handling
+
+Common HttpClient methods
+Method      Purpose
+-------------------
+GET         fetch data
+POST        Create data
+PUT         Replace data
+Patch       Update partial data
+Delete      Remove data
+
+Example GET Request
+this.http.get<Product[]>('/api/products')
+
+Breakdown:
+this.http --> HttpClient instance
+.get --> HTTP GET Request
+<Product[]> --> Typescript generic
+/api/products - API endpoint
+
+Return type:
+Observable<Product[]>
+
+Meaning:
+Response arrives asynchronously as a stream.
+
+POST Example
+------------
+this.http.post<Product>('/api/products',product)
+
+Meaning:
+* Send product object
+* Server returns created product
+
+2. Error handling
+-----------------
+API can fail:
+* Network error
+* Server error
+* Authentication error
+
+RxJS operator used:
+catchError()
+
+Example:
+.pipe(
+    catchError(error=>{
+        console.log(error);
+        return throwError(()=>error);
+    })
+)
+Meaning:
+1. intercept error
+2. log error
+3. propogate error
+
+3. Interceptors (***)
+----------------------
+Angular inteceptors are like middleware.
+They intercept HTTP request before sending to server.
+
+Flow:
+component
+|
+service
+|
+interceptor
+|
+Backend api
+
+And response comes back same Patch
+
+What Interceptors are used for
+----------------------------
+* Add authentication token
+* Logging
+* Modify headers
+* Global error handling
+* Retry failer requests
+* caching responses
+
+Interceptor interface
+---------------------
+intercept(req: HttpRequest<any>, next: HttpHandler)
+
+Parameters:
+Parameter        Meaning
+------------------------
+req              original HTTP request
+next             next handler in caching
+
+Return:
+Observable<HttpEvent<any>>
+
+4. Retry operator
+-----------------
+Sometimes API fails temporarily
+Use:
+retry(2)
+
+Meaning:
+Retry request 2 more times before failing
+
+5 Caching concept
+-----------------
+Instead of calling API again:
+Store response in memory
+
+Example:
+if(data cached)
+   return cached Observable
+   else
+   call API
+
+This improves performance

@@ -89,4 +89,8 @@ export class RegisterForm {
   //simulate API call
   //if username exists -->error
   //if not -->null
+
+  onSubmit() {
+    console.warn(this.registerForm.value);
+  }
 }
