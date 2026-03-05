@@ -14,6 +14,8 @@ global error handler
 C.
 Explain interceptor flow
 
+check interceptor folder & app.config.ts which inckludes in Day 5
+
 1. HttpClient (Angular HTTP API)
 --------------------------------
 Angular provides HttpClient service to communicate with backend API's.
@@ -141,3 +143,35 @@ if(data cached)
    call API
 
 This improves performance
+
+What is HttpClient?
+
+HttpClient is Angular's service for performing HTTP requests. It returns Observables, supports interceptors, typed responses, and integrates with RxJS for reactive programming.
+
+🎤 What is Interceptor?
+
+An interceptor is middleware that intercepts HTTP requests and responses globally. It is used to modify requests, add authentication tokens, handle errors, implement caching, or log requests.
+
+🎤 Why Clone Request?
+
+HttpRequest objects are immutable, meaning they cannot be modified directly. Therefore we clone the request and apply modifications like adding headers.
+
+🎤 Interceptor Flow
+Request
+Component
+ ↓
+Service
+ ↓
+Interceptor
+ ↓
+Backend API
+
+Response
+Backend API
+ ↓
+Interceptor
+ ↓
+Component
+🎤 Why retry()?
+
+retry() automatically resends failed HTTP requests a specified number of times, which is useful for handling temporary network failures.
