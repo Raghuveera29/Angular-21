@@ -21,4 +21,8 @@ export const routes: Routes = [
     path: 'http',
     component: Products,
   },
+  {
+    path: 'lazyproduct',
+    loadChildren: () => import('./Day_6/products/products.routes').then((m) => m.productsRoutes),
+  },
 ];
