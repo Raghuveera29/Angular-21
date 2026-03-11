@@ -4,6 +4,7 @@ import { TypeaheadComponent } from './Day_3/typeahead/typeahead';
 import { RegisterForm } from './Day_4/register-form/register-form';
 import { Products } from './Day_5/products/products';
 import { Performance } from './Day_8/performance/performance';
+import { ProductListState } from './Day_9/state/product-list.component';
 
 export const routes: Routes = [
   {
@@ -29,5 +30,9 @@ export const routes: Routes = [
   {
     path: 'performance',
     component: Performance,
+  },
+  {
+    path: 'state9',
+    component: ProductListState,
   },
 ];

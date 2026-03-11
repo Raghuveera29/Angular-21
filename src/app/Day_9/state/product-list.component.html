@@ -1,0 +1,5 @@
+<button (click)="add()">Add Product</button>
+
+<ul>
+  <li *ngFor="let p of products$ | async">{{ p.name }} - ₹{{ p.price }}</li>
+</ul>
