@@ -18,6 +18,11 @@ export class ProductService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl).pipe(retry(2), catchError(this.handleError));
   }
+
+  getProductDetail(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.apiUrl);
+  }
+
   private handleError(error: any) {
     console.error('API Error:', error);
     return throwError(() => new Error('Something went wrong'));

@@ -6,5 +6,6 @@
   { "id": 5, "name": "Jeans", "price": 1500, "category": "fashion" },
   { "id": 6, "name": "Book", "price": 500, "category": "books" },
   { "id": 7, "name": "Notebook", "price": 100, "category": "books" },
-  { "id": 8, "name": "Tablet", "price": 30000, "category": "electronics" }
+  { "id": 8, "name": "Tablet", "price": 30000, "category": "electronics" },
+  { "id": 9, "name": "Mac", "price": 65000, "category": "electronics" }
 ]

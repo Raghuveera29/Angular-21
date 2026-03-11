@@ -1,0 +1,6 @@
+<p>performance works!</p>
+<ul>
+  @for (p of product$ | async; track p.id) {
+    <li>{{ p.name }} - Hello</li>
+  }
+</ul>

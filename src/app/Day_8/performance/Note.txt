@@ -1,0 +1,203 @@
+Day 8 — Change Detection & Performance 
+A: default vs OnPush, zones, async pipe, trackBy 
+B: Convert components to OnPush Measure rerenders 
+C: Explain change detection
+
+Goal: understand how angular updates the DOm and how to optimize it.
+
+1. What is change detection?
+change detection is the process where angular checks data changes and updates the DOM.
+
+count = 0;
+{{count}}
+when countchanges
+this.count =1;
+Angular runs change detection and updates UI
+
+change Detection flow
+---------------------
+User event
+ ↓
+ Angular detects changes 
+  ↓
+  Runs change detection
+   ↓
+   updates DOM
+
+Eg:
+count = 0;
+increase(){
+    this.count++;
+}
+HTML
+---
+<button (click)="increase()">Increase</button>
+<p>{{count}}</p>
+
+2. Angular change detection strategy
+------------------------------------
+Angular default behaviour:
+
+Every component is checked
+Every time change detection runs
+
+Example tree:
+AppComponent
+ ├ HomeComponent
+ ├ ProductList
+ └ FooterComponent
+
+ when something changes: ANgular checks all components Even if only one changed
+
+ Problem
+ -------
+ Large apps with 1000 components - Angular checks all - performance issue
+
+ 3. OnPush change Detection
+ -------------------------
+ OnPsuh optimizes this:
+
+ With OnPush Angular only checks component when:
+ Input reference changes
+ Event occurs inside component
+ Observable emits value
+
+ import {ChangeDetectionStrategy, component} from '@angular/core';
+
+@Component({
+  selector: 'app-products',
+  templateUrl: './products.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ProductsComponent{}
+
+Explanation
+----------
+changeDetection: ChangeDetectionStrategy.OnPush
+
+Means:
+Angular will not check this component every cycle.
+Instead it waits for specific triggers.
+
+OnPush triggers
+--------------
+Angular updates OnPush component when:
+Input reference changes
+Event inside component
+Observable emits value
+
+Eg:
+@input() products: Product[];
+If parent sends new array reference, component updates.
+
+Important Concept
+-----------------
+Bad:
+this.products.push(newProduct);
+
+Reference stays same → OnPush won't detect.
+
+Correct:
+this.products = [...this.products, newProduct];
+
+New array reference created.
+
+4. Zones (Angular Internals)
+Angular uses Zone.js
+Zones track async operations like:
+setTimeout
+Http requests
+click events
+promises
+
+When async task completes:
+Zone triggeres change detection
+
+Example:
+setTimeout(() => {
+  this.message = 'Hello';
+}, 2000);
+Even though asynchronous:
+Angular updates UI.
+Because Zone detected the async task.
+
+Without Zones
+-------------
+Angular would not know when data changes.
+
+5. Async piple
+--------------
+Async pipe automatically:
+subscribes
+updates UI
+unsubscribes
+
+Eg:
+product$ = this.productService.getProducts();
+html
+---
+<li *ngFor="let p of products$ | async">
+{{p.name}}
+</li>
+
+What Asyncpipe does Internally:
+subscribe()
+↓
+receive values
+↓
+trigger change deetection
+↓
+unsubscribe automatically
+This works perfectly with OnPush strategy
+
+6. trackBy (performance optimization)
+------------------------------------
+Without trackBy angular recreates DOm elements
+
+Example list: [1,2,3]
+Updated list:[1,2,3,4] //Angular may create entire list
+
+trackBy Solution
+<li *ngFor="let p of products; trackBy: trackById">
+
+Component:
+trackById(index: number, product: Product) {
+  return product.id;
+}
+
+Meaning:
+Use product.id as unique identifier
+Angular updates only changed item.
+
+Note: now in latest angular trackBy is replaced with track
+
+Question 1
+----------
+What is change detection?
+Answer:
+Change detection is the mechanism by which Angular detects changes in component data and updates the DOM accordingly.
+
+Question 2
+----------
+Default vs OnPush
+
+Default:
+Angular checks all components
+
+OnPush:
+Angular checks component only when input reference changes, events occur, or observables emit.
+
+Question 3
+---------
+What role does Zone.js play?
+Answer:
+Zone.js intercepts asynchronous operations such as HTTP requests, timers, and events and notifies Angular to run change detection.
+
+Question 4
+----------
+Why use async pipe?
+Answer:
+Async pipe automatically subscribes and unsubscribes from observables and triggers change detection efficiently, especially with OnPush components.
+
+
+

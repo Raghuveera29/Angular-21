@@ -3,6 +3,7 @@ import { ProductList } from './Day_1/product-list/product-list';
 import { TypeaheadComponent } from './Day_3/typeahead/typeahead';
 import { RegisterForm } from './Day_4/register-form/register-form';
 import { Products } from './Day_5/products/products';
+import { Performance } from './Day_8/performance/performance';
 
 export const routes: Routes = [
   {
@@ -18,11 +19,15 @@ export const routes: Routes = [
     component: RegisterForm,
   },
   {
-    path: 'http',
+    path: 'http5',
     component: Products,
   },
   {
     path: 'lazyproduct',
     loadChildren: () => import('./Day_6/products/products.routes').then((m) => m.productsRoutes),
+  },
+  {
+    path: 'performance',
+    component: Performance,
   },
 ];

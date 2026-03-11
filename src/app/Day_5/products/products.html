@@ -4,6 +4,13 @@
     <li>{{ p.name }}-{{ p.price }}</li>
   }
 </ul>
-<!-- <ul>
+<ul>
   <li *ngFor="let p of products">{{ p.name }} - {{ p.price }}</li>
+</ul>
+
+<!-- using Async code -->
+<!-- <ul>
+  @for (p of product$ | async; track $index) {
+    <li>{{ p.name }}</li>
+  }
 </ul> -->
