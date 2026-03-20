@@ -1,0 +1,156 @@
+Day 10 — NgRx Intro 
+A: 
+actions 
+reducers 
+effects 
+selectors 
+
+B: Add NgRx to feature: 
+load products 
+loading state 
+error state 
+
+C: Explain unidirectional flow
+
+Day 10 - NgRx Intro
+Topics:
+
+Actions
+reducers
+effects
+selectors
+unidirectional flow
+
+1️⃣ Problem Without State Management
+Imagine this Angular app:
+
+ProductListComponent
+CartComponent
+HeaderComponent
+CheckoutComponent
+
+All components need product and cart data.
+Without centralized state:
+Component
+   ↓
+Service
+   ↓
+API
+
+Each component fetches data seperately:
+Problems:
+duplicate API calls
+state inconsistencey
+complex data sharing
+hard debugging
+
+2️⃣ NgRx Solution
+
+NgRx introduces a central store.
+Architecture:
+
+component
+ ↓
+ Action
+  ↓
+  Reducer
+   ↓
+   Store
+    ↓
+    Selector
+     ↓
+     component
+
+NgRx Visual Architecture
+------------------------
+Component
+   ↓ dispatch
+Action
+   ↓
+Reducer
+   ↓
+Store
+   ↓ select
+Selector
+   ↓
+Component
+
+3️⃣ Actions
+---------
+Actions describe what happened in the application.
+Eg: Load products, Add product, Remove Product
+
+An action is simply an object with type.
+
+Example:
+{
+    type:'[Product] Load Products'
+}
+
+Actions with payload
+--------------------
+{
+    type:'[Product] Load Products Success',
+    products:[...]
+}
+
+Why Actions?
+------------
+They represent events in the application.
+Example:
+User clicked button
+↓
+Action dispatched
+
+4️⃣ Reducers
+-----------
+Reducers update the store state.
+Reducers Rules:
+* Pure functions
+* no side effects
+* immutable updates
+
+Eg: (state, action) -> newState
+
+Eg:
+Initial state:
+products =[]
+
+Action:
+LoadProductsSuccess
+
+Reducer updates state:
+products = APi response
+
+5️⃣ Effects
+-----------
+Reducers cannot call API'select
+Because reducers must stay pure functions
+so NgRx introduces Effects
+
+Effects:
+listen to actions
+callAPi
+dispath new action
+
+Eg:
+LoadProducts action
+|
+Effect triggers API
+|
+dispath LoadProductsSuccess
+
+6️⃣ Selectors
+------------
+Selectors read data from store.
+
+Eg:
+selectProducts
+selectLoading
+selectError
+
+Components use selectors to observe state changes.
+
+
+
+
