@@ -5,6 +5,7 @@ import { RegisterForm } from './Day_4/register-form/register-form';
 import { Products } from './Day_5/products/products';
 import { Performance } from './Day_8/performance/performance';
 import { ProductListState } from './Day_9/state/product-list.component';
+import { ProductListComponent } from './Day_10/components/product-list/product-list.component';
 
 export const routes: Routes = [
   {
@@ -34,5 +35,9 @@ export const routes: Routes = [
   {
     path: 'state9',
     component: ProductListState,
+  },
+  {
+    path: 'ng10',
+    component: ProductListComponent,
   },
 ];

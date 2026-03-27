@@ -6,6 +6,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptors/auth-interceptor';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
+import { ProductEffects } from './Day_10/store/products/product.effects';
+import { productReducer } from './Day_10/store/products/product.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 export const appConfig: ApplicationConfig = {
@@ -13,8 +15,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideStore(),
-    provideEffects(),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
-],
+    provideStore({ products: productReducer }),
+    provideEffects([ProductEffects]),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+    }),
+  ],
 };
