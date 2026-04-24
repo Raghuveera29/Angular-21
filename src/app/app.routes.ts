@@ -6,6 +6,7 @@ import { Products } from './Day_5/products/products';
 import { Performance } from './Day_8/performance/performance';
 import { ProductListState } from './Day_9/state/product-list.component';
 import { ProductListComponent } from './Day_10/components/product-list/product-list.component';
+import { Signal } from './signal/signal';
 
 export const routes: Routes = [
   {
@@ -39,5 +40,9 @@ export const routes: Routes = [
   {
     path: 'ng10',
     component: ProductListComponent,
+  },
+  {
+    path: 'signal',
+    component: Signal,
   },
 ];
