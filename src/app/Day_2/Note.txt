@@ -27,7 +27,7 @@ strict typing benefits
 
 Interfaces vs Types
 ------------------
-Both interface 7 type define the shape of data in Typescript. they describe what an object should look like.
+Both interface & type define the shape of data in Typescript. they describe what an object should look like.
 
 Interfaces
 ---------

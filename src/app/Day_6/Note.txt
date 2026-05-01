@@ -1,0 +1,333 @@
+Day 6 - Routing & Lazy Loading
+A.
+Router basics
+route params
+lazy Loading
+guards
+
+B.
+Feature module lazy loaded
+Add AuthGuard
+
+C.
+Explain lazy loading benefits
+
+1.Angular Router basics
+Angular router allows navigation between pages without reloading the browser
+Eg pages:
+/home
+/login
+
+Angular loads componenets dynamically based on the URL
+
+Router Architecture
+-------------------
+Browser URL
+|
+Angular Router
+|
+Match route
+|
+Load component
+
+Example:
+URl - /products
+Router - matches products route
+component - ProductsComponent loaded
+
+Router configuration
+--------------------
+Routing is configured using a Routes array
+
+import {Routes} from '@angular/router;
+
+export const routes: Routes =[
+    {path:'',component:HomeComponent},
+    {path:'products',component:ProductsComponent}
+]
+
+Understanding Each Line
+-----------------------
+export const routes: Routes
+
+Routes -> Typescript type provided by Angular Router
+Array of route objects
+
+Route object
+-----------
+{path:'products',component: ProductsComponent}
+Meaning
+path: URL segment
+component: component to render
+
+Router Outlet
+-------------
+Angular renders routed component using
+<router-outlet></router-outlet>
+Think of it as: Placeholder where routed components appears
+
+Router Link
+-----------
+Navigate without page reload
+<a routerLink='/products'>Products</a>
+or
+<button [routerLink]="'/products'">
+
+2. Route Parameters
+-------------------
+Route params allow dynamic values in URl
+Eg:
+/product/10
+/product/20
+
+Route config:
+{
+    path:'product/:id',
+    component:ProductDetailComponent
+}
+Here
+:id - means dynamic Parameters
+
+Reading Route Parameter
+-----------------------
+In component:
+constructor(private route: ActivatedRoute){}
+
+then:
+this.route.params.subscribe(params=>{
+    console.log(params['id']);
+})
+Meaning
+Part                Explanation
+-------------------------------
+ActivatedRoute      Angular service for route data
+params              observable emitting route Parameters
+
+3. Lazy loading
+---------------
+Lazy loading means:
+Load feature only when user navigates to them
+Instead of loading everything at startup
+
+Without Lazy loading
+-------------------
+App start
+|
+load all modules
+|
+Large bundle
+|
+Slow startup
+
+With lazy loading
+-----------------
+App start
+|
+Load main module only
+|
+Load feature module when route visited
+
+Result:
+Faster startup
+Smaller bundle size
+Better performance
+
+Lazy route Example
+-----------------
+{
+    path:'admin',
+    loadChildren:()=> import('./admin/admin.routes').then (m=>m.adminRoutes)
+}
+loadChildren - lazy load module
+import() - dynamic import
+admin.routes - route config
+
+4. Guards
+---------
+Guards protect routes
+Eg:
+/admin
+only logged in users allowed
+
+Common Guards
+-------------
+Guard              Purpose
+--------------------------
+CanActivate      allow/deny route
+CanDeactivate    prevent leaving page
+Resolve          fetch data before navigation
+CanLoad          block lazy loading
+
+eg:
+CanActivate: [AuthGuard]
+
+Meaning:
+Router calls AuthGuard before navigation
+
+Guard flow
+---------
+user clicks route
+|
+Router calls guards
+|
+Guard returns true or false
+|
+Navigation allowed/blocked
+
+Guard Return Type
+----------------
+Guard can returns
+boolean
+Observable<boolean>
+Promise<boolean>
+UrlTree
+
+Q. What is Angular Router?
+A. Angular Router enables navigation between components based on URL changes without reloading the page.
+
+Q. What is Lazy Loading?
+A. Lazy loading is a technique where Angular loads feature modules only when the user navigates to them, reducing initial bundle size and improving application startup performance.
+
+Benefits of Lazy Loading
+✔ Faster initial load
+✔ Smaller bundle size
+✔ Better scalability
+✔ Modular architecture
+
+Q. What are Route Guards?
+A. Route guards control access to routes by implementing logic that decides whether navigation is allowed or blocked.
+
+Routing Flow in Your App
+-----------------------
+User → /lazyproduct
+            ↓
+app.routes.ts
+            ↓
+lazy load products.routes.ts
+            ↓
+path:'' → ProductsComponent
+
+Then clicking link:
+
+/lazyproduct/10
+            ↓
+:id route
+            ↓
+ProductDetailComponent
+
+
+
+
+Route params vs Query params
+--------------------------
+Route param: /product/10
+
+QueryParam: /product?id=10
+
+| Feature             | Route Params         | Query Params        |
+| ------------------- | -------------------- | ------------------- |
+| URL Position        | Part of route path   | After `?` in URL    |
+| Used For            | Required identifiers | Optional filters    |
+| Example URL         | `/product/10`        | `/product?id=10`    |
+| Route Config Needed | Yes                  | No                  |
+| Access Method       | `route.params`       | `route.queryParams` |
+
+Query Params
+-----------
+Query params appear after ?
+Example URL:
+/products?category=electronics
+or
+/products?page=2&sort=price
+No Route Config Needed
+
+{
+  path: 'products',
+  component: ProductsComponent
+}
+
+Navigate with Query Params
+<a
+  [routerLink]="['/products']"
+  [queryParams]="{ category: 'electronics' }"
+>
+Electronics
+</a>
+
+Generated URL:
+/products?category=electronics
+
+Multiple Query Params
+<a
+  [routerLink]="['/products']"
+  [queryParams]="{
+    category: 'electronics',
+    page: 2
+  }"
+>
+Products
+</a>
+
+URL becomes:
+/products?category=electronics&page=2
+
+
+Read Query Params
+
+import { ActivatedRoute } from '@angular/router';
+
+constructor(private route: ActivatedRoute) {}
+
+ngOnInit() {
+
+  this.route.queryParams.subscribe(params => {
+    const category = params['category'];
+    const page = params['page'];
+
+    console.log(category);
+    console.log(page);
+  });
+
+}
+
+Flow Example
+User opens:
+/products?category=electronics&page=2
+
+Angular reads:
+
+category = electronics
+page = 2
+
+
+4️⃣ Visual Difference
+Route Param
+/product/10
+         ↑
+       required identifier
+Query Param
+/products?category=electronics&page=2
+           ↑ optional filters
+
+5️⃣ Real World Usage
+Route Params
+Used for specific resource
+/user/25
+/order/987
+/product/10
+
+Query Params
+Used for filtering / sorting
+
+/products?category=mobile
+/products?price=1000
+/products?page=2
+6️⃣ Angular Interview Answer (Best)
+
+If interviewer asks:
+
+“What is difference between route params and query params?”
+
+Answer:
+
+Route parameters are part of the route path and are typically used to identify a specific resource, such as /product/10. Query parameters appear after a question mark in the URL and are used for optional filtering, sorting, or pagination, such as /products?category=electronics&page=2. Route params are defined in route configuration using :id, while query params do not require route configuration.

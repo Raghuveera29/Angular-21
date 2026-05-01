@@ -1,0 +1,11 @@
+<h2>Products</h2>
+
+<div *ngIf="loading$ | async">
+ Loading products...
+</div>
+
+<ul>
+  <li *ngFor="let p of products$ | async">
+    {{p.name}} - ₹{{p.price}}
+  </li>
+</ul>

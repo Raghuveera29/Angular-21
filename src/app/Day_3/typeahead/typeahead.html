@@ -1,0 +1,9 @@
+<h3>Product Search</h3>
+
+<input type="text" [formControl]="searchControl" placeholder="Type product name..." />
+
+<div *ngIf="loading">Searching...</div>
+
+<ul>
+  <li *ngFor="let p of results$ | async">{{ p.name }} — ₹{{ p.price }}</li>
+</ul>

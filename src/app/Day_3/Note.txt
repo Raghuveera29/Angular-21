@@ -1,0 +1,170 @@
+// RxJS patterns:
+// - Use FormControl.valueChanges for input streams.
+// - debounceTime(300) -> wait for pause in typing.
+// - distinctUntilChanged() -> ignore identical consecutive terms.
+// - switchMap(term => http.get(...)) -> cancels previous pending requests.
+// - takeUntil(destroy$) -> auto-unsubscribe on component destroy.
+// - Prefer results$ + async pipe in template to avoid manual unsubscribes.
+
+1) Observable vs Promise — short & exact
+---------------------------------------
+
+Promise
+-------
+
+Represents one asynchronous value that will arrive in the future (resolved or rejected).
+
+Eager: starts running immediately when created.
+
+Can’t be cancelled (natively).
+
+Example: fetch(url).then(...).
+
+Observable
+----------
+
+Represents a stream of values over time (0..N values).
+
+Lazy: only runs when subscribed.
+
+Can emit next, error, complete.
+
+Can be cancelled by unsubscribing.
+
+Composable: operators via pipe() let you transform the stream declaratively.
+
+Key mental model:
+-----------------
+
+Promise = a single future value.
+Observable = an ongoing data pipeline.
+
+2) subscribe lifecycle — what happens under the hood
+---------------------------------------------------
+
+When you call observable.subscribe(...), you get a Subscription. Subscription has an unsubscribe() method.
+
+subscribe can accept:
+
+observable.subscribe({
+  next: value => { /* called on each emission */ },
+  error: err => { /* called on error, stream ends */ },
+  complete: () => { /* stream completed */ }
+});
+
+Line-by-line semantics:
+
+next — receives each emitted value.
+
+error — receives first error, after which the stream ends (no more next).
+
+complete — stream successfully finished; no more values.
+
+unsubscribe() — cancels the observable execution and stops future emissions.
+
+Important patterns
+------------------
+
+Always unsubscribe from long-lived subscriptions (e.g., component lifetime) to avoid memory leaks.
+
+Typical Angular pattern: use a destroy$ = new Subject<void>() and takeUntil(this.destroy$) in the pipe; then on ngOnDestroy() call this.destroy$.next() and this.destroy$.complete().
+
+3) pipe — the composition mechanism
+------------------------------------
+
+pipe() accepts RxJS operators (pure functions) and returns a transformed observable.
+
+Example:
+
+obs$.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(term => this.searchService.search(term))
+)
+
+Each operator returns a new Observable — you chain them declaratively.
+
+Operators are lazy — they don’t run until subscribed.
+
+4) map vs switchMap vs mergeMap (deep)
+------------------------------------
+map
+---
+
+Operator that transforms each emitted value to another value synchronously (or to a non-Observable).
+
+Signature: map<T, R>(fn: (t: T) => R)
+
+Example: turn User into User.name.
+
+Important: if you return an Observable from map, the result is Observable<Observable<...>> — not usually what you want.
+
+switchMap
+---------
+
+Projects each source emission to an inner observable, then switches to the latest inner observable:
+
+Unsubscribes from the previous inner observable when a new source emission arrives.
+
+Use when you only care about results of the latest request (typeahead, live search).
+
+Prevents race conditions and keeps UI tied to the latest query.
+
+mergeMap
+--------
+
+Projects each source emission to an inner observable and merges results concurrently.
+
+Doesn’t cancel previous inner observables; all run to completion.
+
+Use when you need to run multiple requests in parallel and process all results.
+
+(Also worth knowing: concatMap runs inner observables sequentially — queued.)
+
+Analogy
+------
+
+switchMap: “only the latest matters” (cancel older)
+
+mergeMap: “start everything, handle all” (parallel)
+
+map: “transform the value itself”
+
+Interview + recall (practice answers — deep)
+---------------------------------------------
+
+Practice saying these out loud (concise, interview-grade):
+
+Q — Observable vs Promise
+
+Observable is a lazy stream of 0..N values over time, cancellable via unsubscribe, and composable with operators. Promise is eager, resolves once, and is not cancellable.
+
+Q — Subscribe lifecycle
+
+subscribe accepts { next, error, complete }. next receives values; error terminates the stream; complete signals success. Unsubscribe cancels future emissions. In Angular use takeUntil(destroy$) or async pipe to avoid leaks.
+
+Q — What pipe() does
+
+pipe() composes operators into a data transformation pipeline. Operators are executed in sequence when the observable is subscribed.
+
+Q — map vs switchMap vs mergeMap (explain and when to use)
+
+map — transforms values synchronously; use when you want to convert shape of emitted value.
+
+switchMap — switch to inner observable and cancel previous inner when a new source value comes; use for typeahead/live search where only latest response matters.
+
+mergeMap — start and keep all inner observables concurrently and merge results; use when you want to run multiple requests in parallel and handle all their results (e.g., batch fetching multiple independent resources).
+
+Q — Why use debounceTime + distinctUntilChanged + switchMap for typeahead?
+
+debounceTime reduces request frequency; distinctUntilChanged avoids duplicate queries; switchMap cancels stale requests so UI always shows the latest query result — preventing race conditions.
+
+✅ Extra: Visualize operator behaviors (conceptual)
+
+User types: A → AB → ABC quickly
+
+With debounceTime(300) user pauses, only last stable term emits.
+
+With switchMap, if ABC triggers a request and AB's request is still pending, AB's result is cancelled and ignored.
+
+With mergeMap, both AB and ABC requests will complete and both results can arrive — you must manage interleaving.
